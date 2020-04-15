@@ -1,8 +1,10 @@
 package com.ravimhzn.infosyscodingapplication.ui.di
 
 
+import android.content.Context
 import com.ravimhzn.healthyrecipe.AppExecutors
 import com.ravimhzn.healthyrecipe.network.RecipeApiService
+import com.ravimhzn.healthyrecipe.ui.adapter.RecipeListAdapter
 import com.ravimhzn.healthyrecipe.ui.viewmodels.RecipeApiClient
 import com.ravimhzn.healthyrecipe.ui.viewmodels.RecipeListRepository
 import dagger.Module
@@ -41,5 +43,8 @@ class MainModule {
         return RecipeListRepository(recipeApiClient)
     }
 
-
+    @Provides
+    fun provideRecipeListAdapter(): RecipeListAdapter {
+        return RecipeListAdapter()
+    }
 }

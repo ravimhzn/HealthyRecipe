@@ -8,11 +8,15 @@ import javax.inject.Inject
 class RecipeListViewModel @Inject constructor(private val recipeListRepository: RecipeListRepository) :
     ViewModel() {
 
+    init {
+        searchRecipeApi("breakfast", 1)
+    }
+
     fun getRecipe(): LiveData<MutableList<Recipe>> {
         return recipeListRepository.getRecipe()
     }
 
-    fun serachRecipeApi(query: String, pageNumber: Int) {
+    fun searchRecipeApi(query: String, pageNumber: Int) {
         recipeListRepository.searchRecipeApi(query, pageNumber)
     }
 }
