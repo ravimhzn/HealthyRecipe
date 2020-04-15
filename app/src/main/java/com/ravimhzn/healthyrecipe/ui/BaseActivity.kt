@@ -6,8 +6,9 @@ import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.ravimhzn.healthyrecipe.R
+import dagger.android.support.DaggerAppCompatActivity
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : DaggerAppCompatActivity() {
 
     lateinit var mProgressBar: ProgressBar
 

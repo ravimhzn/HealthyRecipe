@@ -1,7 +1,7 @@
 package com.ravimhzn.healthyrecipe.di
 
 
-import com.ravimhzn.healthyrecipe.ui.MainActivity
+import com.ravimhzn.healthyrecipe.ui.RecipeList
 import com.ravimhzn.healthyrecipe.ui.di.MainFragmentBuildersModule
 import com.ravimhzn.healthyrecipe.ui.di.MainViewModelModule
 import com.ravimhzn.infosyscodingapplication.ui.di.MainModule
@@ -18,5 +18,5 @@ abstract class ActivityBuildersModule {
             MainViewModelModule::class
         ]
     )
-    abstract fun contributeMainActivity(): MainActivity
+    abstract fun contributeMainActivity(): RecipeList
 }
