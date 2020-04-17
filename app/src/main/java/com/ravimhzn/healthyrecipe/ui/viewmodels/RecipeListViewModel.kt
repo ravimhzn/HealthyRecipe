@@ -8,15 +8,14 @@ import javax.inject.Inject
 class RecipeListViewModel @Inject constructor(private val recipeListRepository: RecipeListRepository) :
     ViewModel() {
 
-    init {
-        searchRecipeApi("breakfast", 1)
-    }
+    var mIsViewingRecipes = false
 
     fun getRecipe(): LiveData<MutableList<Recipe>> {
         return recipeListRepository.getRecipe()
     }
 
     fun searchRecipeApi(query: String, pageNumber: Int) {
+        mIsViewingRecipes = true //for changing the view of recyclerview
         recipeListRepository.searchRecipeApi(query, pageNumber)
     }
 }

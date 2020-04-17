@@ -5,14 +5,14 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Recipe(
-    val __v: Int? = null,
-    val _id: String? = null,
-    val image_url: String? = null,
-    val ingredients: List<String?>? = null,
-    val publisher: String? = null,
-    val publisher_url: String? = null,
-    val recipe_id: String? = null,
-    val social_rank: Double? = null,
-    val source_url: String? = null,
-    val title: String? = null
+    var __v: Int? = null,
+    var _id: String? = null,
+    var image_url: String? = null,
+    var ingredients: List<String?>? = null,
+    var publisher: String? = null,
+    var publisher_url: String? = null,
+    var recipe_id: String? = null,
+    var social_rank: Double? = null,
+    var source_url: String? = null,
+    var title: String? = null
 ) : Parcelable

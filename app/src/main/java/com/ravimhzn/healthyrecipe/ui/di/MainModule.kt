@@ -42,9 +42,9 @@ class MainModule {
     fun provideRecipeListRepository(recipeApiClient: RecipeApiClient): RecipeListRepository {
         return RecipeListRepository(recipeApiClient)
     }
-
-    @Provides
-    fun provideRecipeListAdapter(): RecipeListAdapter {
-        return RecipeListAdapter()
-    }
+//
+//    @Provides
+//    fun provideRecipeListAdapter(): RecipeListAdapter {
+//        return RecipeListAdapter()
+//    }
 }
