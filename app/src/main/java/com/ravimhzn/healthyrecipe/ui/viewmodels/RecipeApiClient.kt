@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.ravimhzn.healthyrecipe.AppExecutors
 import com.ravimhzn.healthyrecipe.model.Recipe
+import com.ravimhzn.healthyrecipe.model.RecipeResponse
 import com.ravimhzn.healthyrecipe.model.RecipeSearchReponse
 import com.ravimhzn.healthyrecipe.network.RecipeApiService
 import com.ravimhzn.healthyrecipe.util.Constants.Companion.NETWORK_TIMEOUT
@@ -16,8 +17,14 @@ class RecipeApiClient @Inject constructor(
     private val appExecutors: AppExecutors
 ) {
     private val TAG = RecipeApiClient::class.java.name
-    var mRecipeLiveData: MutableLiveData<MutableList<Recipe>> = MutableLiveData<MutableList<Recipe>>()
+
+    var mRecipeLiveData: MutableLiveData<MutableList<Recipe>> =
+        MutableLiveData<MutableList<Recipe>>()
+    var mRecipeLiveDataIngredients: MutableLiveData<RecipeResponse> =
+        MutableLiveData<RecipeResponse>()
+
     lateinit var mRetrieveRecipeRunnable: RetrieveRecipeRunnable
+    lateinit var mIngredientsRunnable: RetrieveRecipeIngredientsRunnable
 
     fun searchRecipeApi(
         query: String,
@@ -26,6 +33,23 @@ class RecipeApiClient @Inject constructor(
         mRetrieveRecipeRunnable = RetrieveRecipeRunnable(query, pageNumber)
         var handler = appExecutors.networkIOExecutors.submit(
             mRetrieveRecipeRunnable
+        )
+
+        appExecutors.networkIOExecutors.schedule(
+            {
+                handler.cancel(true) //let the user know its timed out
+            },
+            NETWORK_TIMEOUT.toLong(),
+            TimeUnit.MILLISECONDS
+        )
+    }
+
+    fun getRecipeIngredientsFromApi(
+        recipeId: String
+    ) {
+        mIngredientsRunnable = RetrieveRecipeIngredientsRunnable(recipeId)
+        var handler = appExecutors.networkIOExecutors.submit(
+            mIngredientsRunnable
         )
 
         appExecutors.networkIOExecutors.schedule(
@@ -71,6 +95,48 @@ class RecipeApiClient @Inject constructor(
         fun cancelRequest() {
             Log.d(TAG, "Cancel Request -> Cancelling the search request")
             cancelRequest = true
+        }
+    }
+
+
+    inner class RetrieveRecipeIngredientsRunnable(
+        private val recipeId: String,
+        private var cancelRequest: Boolean = false
+    ) : Runnable {
+        override fun run() {
+            var response = getRecipeIngredients(recipeId).execute()
+            if (cancelRequest) {
+                return
+            }
+            if (response.code() == 200) {
+                var result = response.body()
+                mRecipeLiveDataIngredients.postValue(result)
+            } else {
+                var error = response.errorBody().toString()
+                Log.d(TAG, "ERROR -> $error")
+                mRecipeLiveDataIngredients.postValue(null)
+            }
+        }
+
+        //gets the recipe Ingredients from server
+        fun getRecipeIngredients(recipeId: String): Call<RecipeResponse> {
+            return recipeApiService.getRecipe(recipeId)
+        }
+
+        fun cancelRequest() {
+            Log.d(TAG, "Cancel Request -> Cancelling the search request")
+            cancelRequest = true
+        }
+    }
+
+
+    fun cancelRequest() {
+        if (mRetrieveRecipeRunnable != null) {
+            mRetrieveRecipeRunnable.cancelRequest()
+        }
+
+        if (mIngredientsRunnable != null) {
+            mIngredientsRunnable.cancelRequest()
         }
     }
 }
