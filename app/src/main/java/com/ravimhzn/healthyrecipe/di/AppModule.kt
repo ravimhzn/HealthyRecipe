@@ -2,7 +2,10 @@ package com.ravimhzn.healthyrecipe.di
 
 import android.app.Application
 import android.content.Context
-import androidx.room.Room
+import com.ravimhzn.healthyrecipe.AppExecutors
+import com.ravimhzn.healthyrecipe.network.RecipeApiService
+import com.ravimhzn.healthyrecipe.ui.viewmodels.RecipeApiClient
+import com.ravimhzn.healthyrecipe.ui.viewmodels.RecipeListRepository
 import com.ravimhzn.healthyrecipe.util.Constants
 import dagger.Module
 import dagger.Provides
@@ -31,6 +34,39 @@ class AppModule(private val application: Application) {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
+    /**
+     * TODO("NEED TO SEPERATE THESE SCOPES INDIVIDUALLY")
+     */
+
+    @Singleton
+    @Provides
+    fun provideApiService(retrofit: Retrofit): RecipeApiService {
+        return retrofit.create(RecipeApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideNetworkExecutors(): AppExecutors {
+        return AppExecutors()
+    }
+
+    @Singleton
+    @Provides
+    fun provideRecipeApiClient(
+        appExecutors: AppExecutors,
+        recipeApiService: RecipeApiService
+    ): RecipeApiClient {
+        return RecipeApiClient(recipeApiService, appExecutors)
+    }
+
+    @Singleton
+    @Provides
+    fun provideRecipeListRepository(recipeApiClient: RecipeApiClient): RecipeListRepository {
+        return RecipeListRepository(recipeApiClient)
+    }
+
+
 //
 //    @Singleton
 //    @Provides

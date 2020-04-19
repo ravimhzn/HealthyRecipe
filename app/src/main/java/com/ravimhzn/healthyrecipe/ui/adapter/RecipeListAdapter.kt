@@ -34,6 +34,11 @@ class RecipeListAdapter(private val mOnRecipeListener: OnRecipeListener) :
                     .inflate(R.layout.layout_loading_list_item, parent, false)
                 RecipeLoadingViewHolder(view)
             }
+            EXHAUSTED_TYPE -> {
+                view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.layout_search_exhausted, parent, false)
+                SearchExhaustedViewHolder(view)
+            }
             CATEGORY_TYPE -> {
                 view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.layout_category_list_item, parent, false)
@@ -66,24 +71,34 @@ class RecipeListAdapter(private val mOnRecipeListener: OnRecipeListener) :
     override fun getItemViewType(position: Int): Int {
         if (arrRecipeList?.get(position)?.social_rank == -1.0) {
             return CATEGORY_TYPE
-        }
-        if (arrRecipeList?.get(position)?.title.equals("LOADING...")) {
+        } else if (arrRecipeList?.get(position)?.title.equals("LOADING...")) {
             return LOADING_TYPE
+        } else if (arrRecipeList?.get(position)?.title.equals("EXHAUSTED...")) {
+            return EXHAUSTED_TYPE
         } else {
             return RECIPE_TYPE
         }
     }
 
-//    private fun hideLoading() {
-//        if (isLoading()) {
-//            for (recipe in arrRecipeList) {
-//                if (recipe.title.equals("LOADING...")) {
-//                    arrRecipeList.remove(recipe)
-//                }
-//            }
-//            notifyDataSetChanged()
-//        }
-//    }
+
+    fun setQueryExhausted() {
+        hideLoading()
+        val exhaustedRecipe = Recipe()
+        exhaustedRecipe.title = "EXHAUSTED..."
+        arrRecipeList?.add(exhaustedRecipe)
+        notifyDataSetChanged()
+    }
+
+    private fun hideLoading() {
+        if (isLoading()) {
+            for (recipe in this!!.arrRecipeList!!) {
+                if (recipe.title.equals("LOADING...")) {
+                    arrRecipeList?.remove(recipe)
+                }
+            }
+            notifyDataSetChanged()
+        }
+    }
 
     /**
      * TODO, USE RESULT CLASS LATER FOR LOADING FUNCTIONALITY
@@ -128,5 +143,9 @@ class RecipeListAdapter(private val mOnRecipeListener: OnRecipeListener) :
     fun setRecipe(recipeList: MutableList<Recipe>) {
         this.arrRecipeList = recipeList
         notifyDataSetChanged()
+    }
+
+    fun getSelectedRecipe(position: Int): Recipe? {
+        return arrRecipeList?.get(position)
     }
 }

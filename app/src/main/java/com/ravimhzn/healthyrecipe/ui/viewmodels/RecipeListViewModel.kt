@@ -39,7 +39,7 @@ class RecipeListViewModel @Inject constructor(private val recipeListRepository: 
     fun searchNextPage() {
         if (!mIsPerformingQuery
             && mIsViewingRecipes
-        // && !isQueryExhausted().getValue()!!
+            && !isQueryExhausted().value!!
         ) {
             recipeListRepository.searchNextPage()
         }

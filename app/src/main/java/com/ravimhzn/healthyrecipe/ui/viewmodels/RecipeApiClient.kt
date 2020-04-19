@@ -20,11 +20,17 @@ class RecipeApiClient @Inject constructor(
 
     var mRecipeLiveData: MutableLiveData<MutableList<Recipe>> =
         MutableLiveData<MutableList<Recipe>>()
-    var mRecipeLiveDataIngredients: MutableLiveData<RecipeResponse> =
-        MutableLiveData<RecipeResponse>()
+    var mRecipeLiveDataIngredients: MutableLiveData<Recipe> =
+        MutableLiveData<Recipe>()
+    var mIsNetworkTimeout: MutableLiveData<Boolean> =
+        MutableLiveData<Boolean>()
 
     lateinit var mRetrieveRecipeRunnable: RetrieveRecipeRunnable
     lateinit var mIngredientsRunnable: RetrieveRecipeIngredientsRunnable
+
+    init {
+        mIsNetworkTimeout.postValue(false)
+    }
 
     fun searchRecipeApi(
         query: String,
@@ -48,12 +54,16 @@ class RecipeApiClient @Inject constructor(
         recipeId: String
     ) {
         mIngredientsRunnable = RetrieveRecipeIngredientsRunnable(recipeId)
+
         var handler = appExecutors.networkIOExecutors.submit(
             mIngredientsRunnable
         )
 
+       // mIsNetworkTimeout.postValue(false)
+
         appExecutors.networkIOExecutors.schedule(
             {
+                mIsNetworkTimeout.postValue(true)
                 handler.cancel(true) //let the user know its timed out
             },
             NETWORK_TIMEOUT.toLong(),
@@ -109,17 +119,17 @@ class RecipeApiClient @Inject constructor(
                 return
             }
             if (response.code() == 200) {
-                var result = response.body()
+                var result = response.body()?.recipe
                 mRecipeLiveDataIngredients.postValue(result)
             } else {
                 var error = response.errorBody().toString()
-                Log.d(TAG, "ERROR -> $error")
+                Log.d(TAG, "DEBUG-> ERROR :: $error")
                 mRecipeLiveDataIngredients.postValue(null)
             }
         }
 
         //gets the recipe Ingredients from server
-        fun getRecipeIngredients(recipeId: String): Call<RecipeResponse> {
+        private fun getRecipeIngredients(recipeId: String): Call<RecipeResponse> {
             return recipeApiService.getRecipe(recipeId)
         }
 

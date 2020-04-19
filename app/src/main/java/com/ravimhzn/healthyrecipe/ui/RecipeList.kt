@@ -1,5 +1,6 @@
 package com.ravimhzn.healthyrecipe.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
@@ -27,9 +28,7 @@ class RecipeList : BaseActivity(), OnRecipeListener {
 
     private val viewModel by viewModels<RecipeListViewModel> { viewModelFactory }
 
-
     lateinit var recyclerAdapter: RecipeListAdapter
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +83,10 @@ class RecipeList : BaseActivity(), OnRecipeListener {
             viewModel.mIsPerformingQuery = false
             setRecyclerAdapter(it)
         })
+        viewModel.isQueryExhausted().observe(this, Observer {
+            Log.d(TAG, "onChanged: the query is exhausted...$it")
+            recyclerAdapter.setQueryExhausted()
+        })
     }
 
     private fun setRecyclerAdapter(it: MutableList<Recipe>?) {
@@ -91,12 +94,15 @@ class RecipeList : BaseActivity(), OnRecipeListener {
     }
 
     override fun onRecipeClick(position: Int) {
-        Log.d(TAG, "POSITION -> $position")
+        // Log.d(TAG, "POSITION -> $position")
+        val intent = Intent(this, RecipeIngredient::class.java)
+        intent.putExtra("RECIPE", recyclerAdapter.getSelectedRecipe(position))
+        startActivity(intent)
     }
 
     override fun onCategoryClick(category: String) {
         recyclerAdapter.displayLoading()
-        category?.let { viewModel.searchRecipeApi(it, 1) }
+        category.let { viewModel.searchRecipeApi(it, 1) }
     }
 
     private fun displaySearchCategories() {

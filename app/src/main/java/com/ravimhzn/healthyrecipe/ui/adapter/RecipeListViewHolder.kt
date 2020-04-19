@@ -15,10 +15,10 @@ class RecipeListViewHolder(
 ) :
     RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
-    val title = itemView.recipe_title
+    val title = itemView.recipeTitle
     val publisher = itemView.recipe_publisher
-    val socialScore = itemView.recipe_social_score
-    val image = itemView.recipe_image
+    val socialScore = itemView.recipeSocialScore
+    val image = itemView.recipeImage
 
     init {
         itemView.setOnClickListener(this)

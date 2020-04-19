@@ -20,28 +20,28 @@ class MainModule {
      * It's already declared @Singleton in AppModule
      * This class references scoped bindings
      */
-    @Provides
-    fun provideApiService(retrofit: Retrofit): RecipeApiService {
-        return retrofit.create(RecipeApiService::class.java)
-    }
+//    @Provides
+//    fun provideApiService(retrofit: Retrofit): RecipeApiService {
+//        return retrofit.create(RecipeApiService::class.java)
+//    }
 
-    @Provides
-    fun provideNetworkExecutors(): AppExecutors {
-        return AppExecutors()
-    }
-
-    @Provides
-    fun provideRecipeApiClient(
-        appExecutors: AppExecutors,
-        recipeApiService: RecipeApiService
-    ): RecipeApiClient {
-        return RecipeApiClient(recipeApiService, appExecutors)
-    }
-
-    @Provides
-    fun provideRecipeListRepository(recipeApiClient: RecipeApiClient): RecipeListRepository {
-        return RecipeListRepository(recipeApiClient)
-    }
+//    @Provides
+//    fun provideNetworkExecutors(): AppExecutors {
+//        return AppExecutors()
+//    }
+//
+//    @Provides
+//    fun provideRecipeApiClient(
+//        appExecutors: AppExecutors,
+//        recipeApiService: RecipeApiService
+//    ): RecipeApiClient {
+//        return RecipeApiClient(recipeApiService, appExecutors)
+//    }
+//
+//    @Provides
+//    fun provideRecipeListRepository(recipeApiClient: RecipeApiClient): RecipeListRepository {
+//        return RecipeListRepository(recipeApiClient)
+//    }
 //
 //    @Provides
 //    fun provideRecipeListAdapter(): RecipeListAdapter {
